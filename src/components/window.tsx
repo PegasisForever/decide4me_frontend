@@ -1,5 +1,6 @@
 import React, {PropsWithChildren} from 'react'
-import {Box, createStyles, makeStyles, Theme} from '@material-ui/core'
+import {Box, createStyles, IconButton, makeStyles, Paper, Theme, Typography} from '@material-ui/core'
+import {Close} from '@material-ui/icons'
 
 export type WindowProps = {
   backgroundColor?: string,
@@ -19,15 +20,28 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
-    windowContainer: {
+    windowContainer: props => ({
       zIndex: 2001,
-      border: '2px solid black',
       backgroundColor: 'white',
-      width: '100%',
+      width: 'calc(100% - 64px)',
       maxWidth: '600px',
-      height: '100%',
+      // @ts-ignore
+      height: props.height || 'calc(100% - 64px)',
       maxHeight: '800px',
-      overflowY: 'scroll',
+      overflowY: 'auto',
+    }),
+    windowContainerTitle: {
+      marginTop: '16px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    title: {
+      marginLeft: '28px',
+      fontSize: '1.3rem',
+    },
+    closeButton: {
+      marginRight: '16px',
     },
   }),
 )
@@ -35,16 +49,26 @@ const useStyles = makeStyles((theme: Theme) =>
 export function Window(props: PropsWithChildren<WindowProps>) {
   const classes = useStyles()
   return <Box className={classes.windowRoot}
-              bgcolor={props.backgroundColor || 'rgba(0,0,0,0.5)'}
+              bgcolor={props.backgroundColor || 'rgba(0,0,0,0.4)'}
               onClick={props.onClick}
               display={props.center ? 'flex' : 'block'}>
     {props.children}
   </Box>
 }
 
-export function NormalWindowContainer(props: PropsWithChildren<{}>) {
-  const classes = useStyles()
-  return <Box className={classes.windowContainer} onClick={e => e.stopPropagation()}>
+export function NormalWindowContainer(props: PropsWithChildren<{ height?: string }>) {
+  const classes = useStyles({height: props.height})
+  return <Paper elevation={2} className={classes.windowContainer} onClick={e => e.stopPropagation()}>
     {props.children}
+  </Paper>
+}
+
+export function WindowContainerTitle({title, onClose}: { title: string, onClose: () => void }) {
+  const classes = useStyles()
+  return <Box className={classes.windowContainerTitle} onClick={e => e.stopPropagation()}>
+    <Typography className={classes.title}>{title}</Typography>
+    <IconButton className={classes.closeButton} onClick={onClose}>
+      <Close/>
+    </IconButton>
   </Box>
 }
