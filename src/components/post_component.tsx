@@ -15,7 +15,7 @@ export function PostComponent({post}: { post: Post }) {
 function TextPostPart({post}: { post: Post }) {
   const choiceLis: Array<ReactNode> = []
   post.textData!.choices.forEach((votes, choice) => {
-    choiceLis.push(<li>{choice}: {votes}</li>)
+    choiceLis.push(<li key={choice}>{choice}: {votes}</li>)
   })
   return <div>
     <ol>
