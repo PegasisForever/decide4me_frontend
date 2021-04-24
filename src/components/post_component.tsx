@@ -40,18 +40,19 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
 
   getTextPostPart = () => {
     let post = this.state.post
-    const myChoice = post.textData!.results.get(getFBAuth().currentUser!.uid)
+    let fbUser = getFBAuth().currentUser
+    const myChoice = post.textData!.results.get(fbUser?.uid || '')
     const choiceLis: Array<ReactNode> = []
     post.textData!.choices.forEach(({text, vote}, i) => {
       choiceLis.push(<li
         key={text}
         style={{backgroundColor: (myChoice === i) ? 'grey' : 'transparent'}}
         onClick={() => {
-          if (i !== myChoice) {
+          if (i !== myChoice && fbUser) {
             post.voteText(i)
             if (myChoice) post.textData!.choices[myChoice].vote--
             post.textData!.choices[i].vote++
-            post.textData!.results.set(getFBAuth().currentUser!.uid, i)
+            post.textData!.results.set(fbUser.uid || '', i)
             this.setState({})
           }
         }}>
