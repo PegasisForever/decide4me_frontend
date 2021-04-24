@@ -17,6 +17,7 @@ import {network} from '../network/network'
 import {useDropzone} from 'react-dropzone'
 import {getFBAuth} from '../auth'
 import {useAuthState} from 'react-firebase-hooks/auth'
+import AddIcon from '@material-ui/icons/Add'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,6 +84,14 @@ export function NewPostWindow() {
       setIsLoading(true)
       await network.newTextPost(title, description, textPostChoices.map(c => c.text), parseInt(targetVotes), isAnonymous)
     } else {
+      if (title === '') {
+        alert('Title cannot be empty.')
+        return
+      } else if (!imageFile) {
+        alert('Must choose an image.')
+        return
+      }
+      setIsLoading(true)
       await network.newImagePost(title, description, parseInt(targetVotes), isAnonymous, imageFile!)
     }
     setIsLoading(false)
@@ -184,6 +193,19 @@ function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
         }
       }}
     />)}
+    <Button
+      style={{alignSelf: 'flex-start', marginTop: '8px'}}
+      variant="outlined"
+      startIcon={<AddIcon/>}
+      onClick={() => {
+        const newList = [...textPostChoices]
+        const newKey = Math.random()
+        newList.push({text: '', key: newKey})
+        setFocusedKey(newKey)
+        setTextPostChoices(newList)
+      }}>
+      Add Option
+    </Button>
   </>
   // todo delete post
 }
