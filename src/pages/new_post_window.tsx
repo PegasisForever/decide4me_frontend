@@ -1,5 +1,14 @@
 import {NormalWindowContainer, Window, WindowContainerTitle} from '../components/window'
-import {Box, Checkbox, createStyles, makeStyles, TextField, Theme, Typography} from '@material-ui/core'
+import {
+  Box,
+  Checkbox,
+  CircularProgress,
+  createStyles,
+  makeStyles,
+  TextField,
+  Theme,
+  Typography,
+} from '@material-ui/core'
 import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {ToggleButton, ToggleButtonGroup} from '@material-ui/lab'
@@ -7,6 +16,7 @@ import Button from '@material-ui/core/Button'
 import {network} from '../network/network'
 import {useDropzone} from 'react-dropzone'
 import {getFBAuth} from '../auth'
+import {useAuthState} from 'react-firebase-hooks/auth'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,12 +60,13 @@ export function NewPostWindow() {
     key: Math.random(),
   }])
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [user, isUserLoading] = useAuthState(getFBAuth())
 
   useEffect(() => {
-    if (!getFBAuth().currentUser) {
-      history.push('/login', {from: '/new_post',title:'Login to Post'})
+    if (!isUserLoading && !user) {
+      history.push('/login', {from: '/new_post', title: 'Login to Post'})
     }
-  }, [])
+  }, [user, isUserLoading])
 
   const onClose = () => {
     history.goBack()
@@ -128,7 +139,7 @@ export function NewPostWindow() {
 
         {isText ? <NewPostText textPostChoices={textPostChoices} setTextPostChoices={setTextPostChoices}/> :
           <NewPostImage imageFile={imageFile} setImageFile={setImageFile}/>}
-        {isLoading ? <span className={classes.formItem}>Loading</span> :
+        {isLoading ? <CircularProgress className={classes.formItem}/> :
           <Button className={classes.formItem + ' ' + classes.fullWidth} variant="outlined"
                   onClick={post}>Post</Button>}
       </div>

@@ -44,7 +44,7 @@ function NewPostButton() {
   const classes = useNewPostButtonStyles()
   const history = useHistory()
 
-  return <Fab variant="extended" className={classes.fab} onClick={() => history.push('/new_post')}>
+  return <Fab variant="extended" className={classes.fab} color="primary" onClick={() => history.push('/new_post')}>
     <CreateIcon className={classes.icon}/>
     Decide for me
   </Fab>
