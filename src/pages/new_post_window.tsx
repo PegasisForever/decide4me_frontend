@@ -3,7 +3,8 @@ import {Box, createStyles, makeStyles, TextField, Theme} from '@material-ui/core
 import React, {useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {ToggleButton, ToggleButtonGroup} from '@material-ui/lab'
-
+import Button from '@material-ui/core/Button'
+import {network} from '../network/network'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export function NewPostWindow() {
   const history = useHistory()
   const classes = useStyles()
+  const [isLoading, setIsLoading] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [isText, setIsText] = useState(true)
@@ -29,6 +31,16 @@ export function NewPostWindow() {
 
   const onClose = () => {
     history.goBack()
+  }
+  const post = async () => {
+    if (isText) {
+      setIsLoading(true)
+      await network.newTextPost(title, description, textPostChoices.map(c => c.text), 10)
+    } else {
+
+    }
+    setIsLoading(false)
+    onClose()
   }
   return <Window onClick={onClose} center>
     <NormalWindowContainer>
@@ -52,6 +64,7 @@ export function NewPostWindow() {
           </ToggleButton>
         </ToggleButtonGroup>
         {isText ? <NewPostText textPostChoices={textPostChoices} setTextPostChoices={setTextPostChoices}/> : null}
+        {isLoading ? <span>Loading</span> : <Button variant="outlined" onClick={post}>Upload</Button>}
       </div>
     </NormalWindowContainer>
   </Window>
