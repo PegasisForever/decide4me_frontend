@@ -5,13 +5,34 @@ import {PropsWithVisible} from '../utils'
 // @ts-ignore
 import {withIsVisible} from 'react-is-visible'
 import {getFBAuth} from '../auth'
+import firebase from 'firebase/app'
+import {network} from '../network/network'
+
+let storage = firebase.storage()
 
 class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
-  state = {
+  state: {
+    post: Post,
+    imageDownloadUrl: string | null,
+    imageWidth: number | null,
+    imageHeight: number | null,
+  } = {
     post: this.props.post,
+    imageDownloadUrl: null,
+    imageWidth: null,
+    imageHeight: null,
   }
 
   cancelRealTimeUpdateFn: null | (() => void) = null
+
+  componentDidMount = () => {
+    if (this.state.post.imageData) {
+      const pathReference = storage.ref(this.state.post.imageData.imageUrl)
+      pathReference.getDownloadURL().then(url => this.setState({
+        imageDownloadUrl: url,
+      }))
+    }
+  }
 
   componentDidUpdate = () => {
     if (this.props.isVisible && !this.cancelRealTimeUpdateFn) {
@@ -65,10 +86,51 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
   }
 
   getImagePostPart = () => {
-    // let post = this.state.post
-    return <div>
-      image part
-    </div>
+    const post = this.state.post
+    const fbUser = getFBAuth().currentUser
+    const dots: Array<ReactNode> = []
+    post.imageData!.results.forEach(({x, y}, i) => {
+      dots.push(<div
+        key={i}
+        style={{
+          position: 'absolute',
+          width: '8px',
+          height: '8px',
+          left: `${x * 100}%`,
+          top: `${y * 100}%`,
+          backgroundColor: 'white',
+        }}/>)
+    })
+    return this.state.imageDownloadUrl ?
+      <div style={{
+        position: 'relative',
+        aspectRatio: this.state.imageWidth ? `${this.state.imageWidth}/${this.state.imageHeight}` : undefined,
+      }}>
+        <img src={this.state.imageDownloadUrl}
+             alt={'vote'}
+             style={{width: '100%'}}
+             onClick={e => {
+               if (fbUser) {
+                 // @ts-ignore
+                 const rect = e.target.getBoundingClientRect()
+                 const xPercent = (e.clientX - rect.left) / rect.width
+                 const yPercent = (e.clientY - rect.top) / rect.height
+                 network.voteImage(post.id, xPercent, yPercent)
+                 post.imageData!.results.set(getFBAuth().currentUser!.uid, {x: xPercent, y: yPercent})
+                 this.setState({})
+               }
+             }}
+             onLoad={e => {
+               this.setState({
+                 // @ts-ignore
+                 imageWidth: e.target.width,
+                 // @ts-ignore
+                 imageHeight: e.target.height,
+               })
+             }}/>
+        {dots}
+      </div> :
+      <span>Loading</span>
   }
 }
 

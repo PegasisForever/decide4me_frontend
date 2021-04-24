@@ -47,4 +47,13 @@ export const network = {
       choiceIndex,
     })
   },
+
+  async voteImage(postID: string, choiceX: number, choiceY: number): Promise<void> {
+    await axios.post(baseUrl + '/vote/image', {
+      idToken: await getFBAuth().currentUser!.getIdToken(),
+      postID,
+      choiceX,
+      choiceY,
+    })
+  },
 }
