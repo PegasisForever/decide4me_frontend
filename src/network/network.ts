@@ -22,4 +22,21 @@ export const network = {
       targetVotes,
     })
   },
+
+  async newImagePost(title: string, description: string, targetVotes: number, image: File): Promise<void> {
+    let formData = new FormData()
+    formData.append('data', JSON.stringify({
+      idToken: await getFBAuth().currentUser!.getIdToken(),
+      title,
+      description,
+      targetVotes,
+    }))
+    formData.append('image', image)
+    await axios({
+      method: 'post',
+      url: baseUrl + '/new_post/image',
+      data: formData,
+      headers: {'Content-Type': 'multipart/form-data'},
+    })
+  },
 }

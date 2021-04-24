@@ -1,10 +1,11 @@
 import {NormalWindowContainer, Window} from '../components/window'
 import {Box, createStyles, makeStyles, TextField, Theme} from '@material-ui/core'
-import React, {useState} from 'react'
+import React, {useCallback, useMemo, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {ToggleButton, ToggleButtonGroup} from '@material-ui/lab'
 import Button from '@material-ui/core/Button'
 import {network} from '../network/network'
+import {useDropzone} from 'react-dropzone'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,16 +30,17 @@ export function NewPostWindow() {
     text: '',
     key: Math.random(),
   }])
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const onClose = () => {
     history.goBack()
   }
   const post = async () => {
+    setIsLoading(true)
     if (isText) {
-      setIsLoading(true)
       await network.newTextPost(title, description, textPostChoices.map(c => c.text), parseInt(targetVotes))
     } else {
-
+      await network.newImagePost(title, description, parseInt(targetVotes), imageFile!)
     }
     setIsLoading(false)
     onClose()
@@ -53,17 +55,6 @@ export function NewPostWindow() {
         <TextField label="Title" variant="filled" value={title} onChange={e => setTitle(e.target.value)}/>
         <TextField multiline label="Description" rows={4} variant="outlined" value={description}
                    onChange={e => setDescription(e.target.value)}/>
-        <ToggleButtonGroup
-          value={isText ? 'text' : 'image'}
-          exclusive
-          onChange={() => setIsText(!isText)}>
-          <ToggleButton value="text" aria-label="left aligned">
-            Text
-          </ToggleButton>
-          <ToggleButton value="image" aria-label="centered">
-            Image
-          </ToggleButton>
-        </ToggleButtonGroup>
         <div>
           <span>Notify me when more than </span>
           <TextField
@@ -75,7 +66,21 @@ export function NewPostWindow() {
           />
           <span> people voted</span>
         </div>
-        {isText ? <NewPostText textPostChoices={textPostChoices} setTextPostChoices={setTextPostChoices}/> : null}
+        <ToggleButtonGroup
+          value={isText ? 'text' : 'image'}
+          exclusive
+          onChange={(_, value) => {
+            if (value) setIsText(value === 'text')
+          }}>
+          <ToggleButton value="text" aria-label="left aligned">
+            Text
+          </ToggleButton>
+          <ToggleButton value="image" aria-label="centered">
+            Image
+          </ToggleButton>
+        </ToggleButtonGroup>
+        {isText ? <NewPostText textPostChoices={textPostChoices} setTextPostChoices={setTextPostChoices}/> :
+          <NewPostImage imageFile={imageFile} setImageFile={setImageFile}/>}
         {isLoading ? <span>Loading</span> : <Button variant="outlined" onClick={post}>Upload</Button>}
       </div>
     </NormalWindowContainer>
@@ -89,7 +94,6 @@ type NewPostTextProps = {
 
 function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
   const [focusedKey, setFocusedKey] = useState(textPostChoices[0].key)
-  console.log(focusedKey, textPostChoices)
 
   return <>
     {textPostChoices.map(({text, key}, i) => <TextField
@@ -111,5 +115,32 @@ function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
         }
       }}
     />)}
+  </>
+}
+
+type NewPostImageProps = {
+  imageFile: File | null,
+  setImageFile: (file: File | null) => void
+}
+
+
+function NewPostImage({imageFile, setImageFile}: NewPostImageProps) {
+  const onDrop = useCallback(acceptedFiles => {
+    setImageFile(acceptedFiles[0])
+  }, [setImageFile])
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, maxFiles: 1})
+  const memoizedValue = useMemo(() => imageFile ? (URL.createObjectURL(imageFile)) : null, [imageFile])
+
+  return <>
+    <div {...getRootProps()}>
+      <input {...getInputProps()} />
+      {
+        isDragActive ?
+          <p>Drop the files here ...</p> :
+          <p>Drag 'n' drop some files here, or click to select files</p>
+      }
+    </div>
+    {memoizedValue ? <img src={memoizedValue} alt={'preview'}/> : null}
+
   </>
 }
