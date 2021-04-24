@@ -15,23 +15,25 @@ export const network = {
     })
   },
 
-  async newTextPost(title: string, description: string, choices: Array<string>, targetVotes: number): Promise<void> {
+  async newTextPost(title: string, description: string, choices: Array<string>, targetVotes: number,isAnonymous:boolean): Promise<void> {
     await axios.post(baseUrl + '/new_post/text', {
       idToken: await getFBAuth().currentUser!.getIdToken(),
       title,
       description,
       choices,
       targetVotes,
+      isAnonymous,
     })
   },
 
-  async newImagePost(title: string, description: string, targetVotes: number, image: File): Promise<void> {
+  async newImagePost(title: string, description: string, targetVotes: number,isAnonymous:boolean, image: File): Promise<void> {
     let formData = new FormData()
     formData.append('data', JSON.stringify({
       idToken: await getFBAuth().currentUser!.getIdToken(),
       title,
       description,
       targetVotes,
+      isAnonymous,
     }))
     formData.append('image', image)
     await axios({

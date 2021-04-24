@@ -29,12 +29,19 @@ const useStyles = makeStyles((theme: Theme) =>
       height: props.height || 'calc(100% - 64px)',
       maxHeight: '800px',
       overflowY: 'auto',
+      position:'relative'
     }),
     windowContainerTitle: {
-      marginTop: '16px',
+      zIndex: 2100,
+      paddingTop: '16px',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
+      position: 'sticky',
+      left: '0',
+      top: '0',
+      right: '0',
+      backgroundColor:'white',
     },
     title: {
       marginLeft: '28px',
