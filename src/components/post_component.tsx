@@ -7,6 +7,7 @@ import {withIsVisible} from 'react-is-visible'
 import {getFBAuth} from '../auth'
 import firebase from 'firebase/app'
 import {network} from '../network/network'
+import {User} from '../model/user'
 
 let storage = firebase.storage()
 
@@ -19,17 +20,36 @@ const styles = {
   },
   card: {
     margin: '16px',
-    width: '100%',
+    width: 'calc(100% - 64px)',
     maxWidth: '700px',
     overflowWrap: 'break-word',
+    padding: '16px',
   },
   textVoteList: {
-    margin: '16px',
+    marginTop: '16px',
   },
   textVoteItem: {},
+  profileImage: {
+    width: '48px',
+    marginRight: '16px',
+    borderRadius: '50%',
+  },
+  title: {
+    fontSize: '1.5rem',
+    marginTop: '16px',
+  },
+  description: {
+    marginTop: '8px',
+  },
+  userName:{
+    fontSize: '1rem',
+  },
+  timeText: {
+    color: 'rgb(150,150,150)',
+  },
 }
 
-class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post: Post }>>> {
+class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post: Post, user: User }>>> {
   state: {
     post: Post,
     imageDownloadUrl: string | null,
@@ -73,11 +93,19 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
   }
 
   render = () => {
-    let post = this.state.post
-    return <Paper className={this.props.classes.card} elevation={2}>
-      <Typography>{post.title}</Typography>
-      <Typography>{post.time.toDateString()}</Typography>
-      <Typography>{post.description}</Typography>
+    const post = this.state.post
+    const classes = this.props.classes
+    return <Paper className={classes.card} elevation={2}>
+      <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
+        <Box display={'flex'} alignItems={'center'}>
+          <img className={classes.profileImage} src={this.props.user.profileImageUrl} alt={'profile'}/>
+          <Typography className={classes.userName}>{this.props.user.name}</Typography>
+        </Box>
+        <Typography className={classes.timeText}>{post.time.toLocaleString()}</Typography>
+      </Box>
+
+      <Typography className={classes.title}>{post.title}</Typography>
+      <Typography className={classes.description}>{post.description}</Typography>
       {post.textData ? this.getTextPostPart() : this.getImagePostPart()}
     </Paper>
   }
@@ -108,11 +136,16 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
                  this.setState({})
                }
              }}>
-          {widthPercent !== 0 ? <Box position={'absolute'} left="-1px" top="-1px" bottom="-1px"
-                                     width={`calc(${widthPercent * 100}% + 2px)`}
+          {widthPercent !== 0 ? <Box position={'absolute'} left="-2px" top="-2px" bottom="-2px"
+                                     width={`calc(${widthPercent * 100}% + 4px)`}
                                      borderRadius="4px"
                                      bgcolor={(myChoice === i) ? '#3f51b5' : '#b3b7ff'}/> : null}
-          <Typography style={{position: 'absolute', color: (myChoice === i) ? 'white' : 'black', lineHeight: '1.8rem',paddingLeft:'4px'}}>
+          <Typography style={{
+            position: 'absolute',
+            color: (myChoice === i) ? 'white' : 'black',
+            lineHeight: '1.8rem',
+            paddingLeft: '4px',
+          }}>
             {text}: {vote}
           </Typography>
         </Box>

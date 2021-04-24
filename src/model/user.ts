@@ -6,4 +6,13 @@ export class User {
     public notificationTokens: Array<string>,
   ) {
   }
+
+  static fromJson(json:any):User{
+    return new User(
+      json['id'],
+      json['name'],
+      json['profileImageUrl'],
+      json['notificationTokens'],
+    )
+  }
 }

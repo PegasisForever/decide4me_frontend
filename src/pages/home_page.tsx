@@ -32,9 +32,9 @@ export function HomePage() {
 
 function PostsList() {
   const classes = useStyles()
-  const [posts] = usePromise(() => network.getRecommendation(), [])
+  const [recommendationList] = usePromise(() => network.getRecommendation(), [])
   return <Box className={classes.postList} marginTop={'68px'}>
-    {posts?.map(post => <PostComponent key={post.id} post={post}/>)}
+    {recommendationList?.map(({post, user}) => <PostComponent key={post.id} post={post} user={user}/>)}
   </Box>
 }
 
