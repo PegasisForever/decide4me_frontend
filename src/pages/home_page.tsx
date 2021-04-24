@@ -6,17 +6,24 @@ import {useHistory} from 'react-router-dom'
 import usePromise from 'react-use-promise'
 import {PostComponent} from '../components/post_component'
 import {network} from '../network/network'
+import {useAuthState} from 'react-firebase-hooks/auth'
+import {getFBAuth} from '../auth'
 
 export function HomePage() {
-  const [posts] = usePromise(() => network.getRecommendation(), [])
+  const [, isLoading] = useAuthState(getFBAuth())
 
   return <div>
     <HomeNavbar/>
-    <Box marginTop={'68px'}>
-      {posts?.map(post => <PostComponent key={post.id} post={post}/>)}
-    </Box>
+    {!isLoading ? <PostsList/> : null}
     <NewPostButton/>
   </div>
+}
+
+function PostsList() {
+  const [posts] = usePromise(() => network.getRecommendation(), [])
+  return <Box marginTop={'68px'}>
+    {posts?.map(post => <PostComponent key={post.id} post={post}/>)}
+  </Box>
 }
 
 const useNewPostButtonStyles = makeStyles((theme: Theme) =>

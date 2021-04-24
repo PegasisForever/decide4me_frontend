@@ -60,13 +60,17 @@ export const network = {
   },
 
   async getRecommendation(): Promise<Array<Post>> {
+    let idToken: string | null = null
+    if (getFBAuth().currentUser) {
+      idToken = await getFBAuth().currentUser!.getIdToken()
+    }
     const res = await axios.post(baseUrl + '/recommendation', {
-      idToken: await getFBAuth().currentUser!.getIdToken(),
+      idToken,
       start: 0,
       length: 10,
       refreshID: 'awa',
     })
     // @ts-ignore
-    return res.data['data'].map(({id, post})=>Post.getFromJson(id, post))
+    return res.data['data'].map(({id, post}) => Post.getFromJson(id, post))
   },
 }

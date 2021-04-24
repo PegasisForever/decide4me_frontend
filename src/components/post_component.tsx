@@ -49,6 +49,14 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
     }
   }
 
+  componentWillUnmount = () => {
+    if (this.cancelRealTimeUpdateFn) {
+      console.log(this.state.post.id, 'stop update')
+      this.cancelRealTimeUpdateFn()
+      this.cancelRealTimeUpdateFn = null
+    }
+  }
+
   render = () => {
     let post = this.state.post
     return <Box border={'2px solid black'}>
