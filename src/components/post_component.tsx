@@ -74,7 +74,7 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
     const choiceLis: Array<ReactNode> = []
     post.textData!.choices.forEach(({text, vote}, i) => {
       choiceLis.push(<li
-        key={text}
+        key={i}
         style={{backgroundColor: (myChoice === i) ? 'grey' : 'transparent'}}
         onClick={() => {
           if (i !== myChoice && fbUser) {
