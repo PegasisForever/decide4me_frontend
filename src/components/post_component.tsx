@@ -22,6 +22,7 @@ const styles = {
     height: '8px',
     backgroundColor: 'white',
     transform: 'translate(-50%,-50%)',
+    pointerEvents: 'none',
   },
   card: {
     margin: '16px',
@@ -78,9 +79,11 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
   state: {
     post: Post,
     imageDownloadUrl: string | null,
+    showImageHelp: boolean,
   } = {
     post: this.props.post,
     imageDownloadUrl: null,
+    showImageHelp: false,
   }
 
   cancelRealTimeUpdateFn: null | (() => void) = null
@@ -137,7 +140,9 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
 
   localizeDate = (date: Date) => {
     let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    return `${months[date.getMonth()]} ${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`
+    let hours = date.getHours().toString()
+    let minutes = date.getMinutes().toString()
+    return `${months[date.getMonth()]} ${date.getFullYear()}, ${hours.length === 1 ? ('0' + hours) : hours}:${minutes.length === 1 ? ('0' + minutes) : minutes}`
   }
 
   getTextPostPart = () => {
@@ -226,8 +231,11 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
             width: '36px',
             height: '50.6px',
             transform: 'translate(-50%, -100%)',
+            pointerEvents: 'none',
           }}>
-          <img style={{position: 'absolute'}} src={'/pin.svg'} alt={'pin'} width="36px"/>
+          <img
+            style={{position: 'absolute'}} src={'/pin.svg'} alt={'pin'} width="36px"
+          />
           {fbUser.photoURL ? <img
             style={{
               position: 'absolute',
@@ -259,6 +267,20 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
         <img src={this.state.imageDownloadUrl}
              alt={'vote'}
              className={classes.voteImage}
+             onMouseLeave={() => {
+               this.setState({
+                 showImageHelp: false,
+               })
+             }}
+             onMouseMove={e => {
+               // @ts-ignore
+               const rect = e.target.getBoundingClientRect()
+               const xPercent = (e.clientX - rect.left) / rect.width
+               const yPercent = (e.clientY - rect.top) / rect.height
+               this.setState({
+                 showImageHelp: xPercent >= 0 && xPercent <= 1 && yPercent >= 0 && yPercent <= 1,
+               })
+             }}
              onClick={e => {
                if (fbUser) {
                  // @ts-ignore
@@ -273,6 +295,20 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
                }
              }}/>
         {dots}
+        {this.state.showImageHelp ? <Typography
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '8px',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            color: 'white',
+            transform: 'translateX(-50%)',
+            padding: '2px 4px',
+            borderRadius: '4px',
+            pointerEvents: 'none',
+          }}>
+          Click anywhere on the image to vote.
+        </Typography> : null}
       </div> :
       <div className={classes.imageLoadPlaceHolder}
            style={{aspectRatio: `${post.imageData!.size.width}/${post.imageData!.size.height}`}}>

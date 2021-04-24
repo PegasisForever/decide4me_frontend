@@ -75,7 +75,6 @@ export const network = {
     })
     // @ts-ignore
     return res.data['data'].map(({id, post, user}) => {
-      console.log(user)
       return ({
         post: Post.getFromJson(id, post),
         user: user ? User.fromJson(user) : new User('id', 'temp', '', []),

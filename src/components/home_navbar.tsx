@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: '16px',
     },
     logoText: {
-      fontSize: '1.7rem',
-      marginLeft: '16px',
+      fontSize: '1.5rem',
+      marginLeft: '8px',
     },
     profilePicture: {
       marginRight: '8px',
@@ -42,7 +42,11 @@ export function HomeNavbar() {
   const [showLogout, setShowLogout] = useState(false)
   const classes = useStyles()
   return <Box className={classes.bar}>
-    <Typography className={classes.logoText}>Decide4me</Typography>
+    <Box display={'flex'} alignItems={'center'}>
+      <img style={{marginLeft:'8px'}} src={'/logo.svg'} width={'56px'} alt={'logo'}/>
+      <Typography className={classes.logoText}>Decide4me</Typography>
+    </Box>
+
     {user ? <img className={classes.profilePicture} alt={'profile'} onClick={() => setShowLogout(!showLogout)}
                  src={user.photoURL || ''}/> :
       <Button className={classes.loginButton} onClick={() => history.push('/login')}>Login</Button>}
