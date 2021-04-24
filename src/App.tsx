@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme: Theme) =>
     '@global': {
       'body': {
         margin: '0',
+        backgroundColor: '#f2f4f5',
       },
     },
   }),

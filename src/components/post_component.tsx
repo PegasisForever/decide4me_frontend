@@ -9,7 +9,7 @@ import firebase from 'firebase/app'
 import {network} from '../network/network'
 import {User} from '../model/user'
 import {withRouter} from 'react-router-dom'
-
+import {motion} from 'framer-motion'
 
 let storage = firebase.storage()
 
@@ -35,6 +35,12 @@ const styles = {
   },
   textVoteItem: {
     cursor: 'pointer',
+    width: '100%',
+    height: '1.9rem',
+    margin: '4px 0',
+    position: 'relative',
+    boxSizing: 'border-box',
+    borderRadius: '4px',
   },
   profileImage: {
     width: '48px',
@@ -146,35 +152,57 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
         widthPercent = vote / totalVote
       }
       choiceLis.push(<Typography>
-        <Box width={'100%'} height={'1.9rem'} margin={'4px 0'} position={'relative'}
-             boxSizing={'border-box'}
-             border={`2px solid ${(myChoice === i) ? '#3f51b5' : '#b3b7ff'}`} borderRadius="4px"
-             className={this.props.classes.textVoteItem}
-             key={i}
-             onClick={() => {
-               if (i !== myChoice && fbUser) {
-                 post.voteText(i)
-                 if (myChoice) post.textData!.choices[myChoice].vote--
-                 post.textData!.choices[i].vote++
-                 post.textData!.results.set(fbUser.uid || '', i)
-                 this.setState({})
-               } else if (!fbUser) {
-                 this.props.history.push('/login', {from: '/', title: 'Login to Vote'})
-               }
-             }}>
-          {widthPercent !== 0 ? <Box position={'absolute'} left="-2px" top="-2px" bottom="-2px"
-                                     width={`calc(${widthPercent * 100}% + 4px)`}
-                                     borderRadius="4px"
-                                     bgcolor={(myChoice === i) ? '#3f51b5' : '#b3b7ff'}/> : null}
+        <motion.div
+          animate={{
+            border: `2px solid ${(myChoice === i) ? '#3f51b5' : '#b3b7ff'}`,
+          }}
+          className={this.props.classes.textVoteItem}
+          key={i}
+          onClick={() => {
+            if (i !== myChoice && fbUser) {
+              post.voteText(i)
+              if (myChoice) post.textData!.choices[myChoice].vote--
+              post.textData!.choices[i].vote++
+              post.textData!.results.set(fbUser.uid || '', i)
+              this.setState({})
+            } else if (!fbUser) {
+              this.props.history.push('/login', {from: '/', title: 'Login to Vote'})
+            }
+          }}>
+          <motion.div
+            style={{
+              position: 'absolute',
+              left: '-2px',
+              top: '-2px',
+              bottom: '-2px',
+              borderRadius: '4px',
+            }}
+            transition={{
+              type: 'spring',
+              bounce: 0,
+            }}
+            animate={{
+              width: widthPercent === 0 ? '0px' : `calc(${widthPercent * 100}% + 4px)`,
+              backgroundColor: (myChoice === i) ? '#3f51b5' : '#b3b7ff',
+            }}
+          />
           <Typography style={{
             position: 'absolute',
-            color: (myChoice === i) ? 'white' : 'black',
             lineHeight: '1.8rem',
             paddingLeft: '4px',
           }}>
-            {text}: {vote}
+            <motion.span
+              animate={{
+                color: (myChoice === i) ? '#FFF' : '#000',
+              }}
+              transition={{
+                type: 'spring',
+                bounce: 0,
+              }}>
+              {text}: {vote}
+            </motion.span>
           </Typography>
-        </Box>
+        </motion.div>
       </Typography>)
     })
     return <div className={this.props.classes.textVoteList}>
