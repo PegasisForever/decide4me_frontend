@@ -1,6 +1,6 @@
 import {Post} from '../model/post'
 import React, {Component, ReactNode} from 'react'
-import {Box, Paper, Typography, withStyles} from '@material-ui/core'
+import {Box, CircularProgress, Paper, Typography, withStyles} from '@material-ui/core'
 import {PropsWithClasses, PropsWithVisible} from '../utils'
 // @ts-ignore
 import {withIsVisible} from 'react-is-visible'
@@ -14,9 +14,12 @@ let storage = firebase.storage()
 const styles = {
   imageVoteDot: {
     position: 'absolute',
+    borderRadius: '50%',
+    border: '2px solid black',
     width: '8px',
     height: '8px',
     backgroundColor: 'white',
+    transform: 'translate(-50%,-50%)',
   },
   card: {
     margin: '16px',
@@ -31,6 +34,7 @@ const styles = {
   textVoteItem: {},
   profileImage: {
     width: '48px',
+    height: '48px',
     marginRight: '16px',
     borderRadius: '50%',
   },
@@ -41,11 +45,21 @@ const styles = {
   description: {
     marginTop: '8px',
   },
-  userName:{
+  userName: {
     fontSize: '1rem',
   },
   timeText: {
     color: 'rgb(150,150,150)',
+  },
+  voteImage: {
+    width: '100%',
+    borderRadius: '4px',
+  },
+  imageLoadPlaceHolder: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 }
 
@@ -101,13 +115,18 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
           <img className={classes.profileImage} src={this.props.user.profileImageUrl} alt={'profile'}/>
           <Typography className={classes.userName}>{this.props.user.name}</Typography>
         </Box>
-        <Typography className={classes.timeText}>{post.time.toLocaleString()}</Typography>
+        <Typography className={classes.timeText}>{this.localizeDate(post.time)}</Typography>
       </Box>
 
       <Typography className={classes.title}>{post.title}</Typography>
-      <Typography className={classes.description}>{post.description}</Typography>
+      {post.description !== '' ? <Typography className={classes.description}>{post.description}</Typography> : null}
       {post.textData ? this.getTextPostPart() : this.getImagePostPart()}
     </Paper>
+  }
+
+  localizeDate = (date: Date) => {
+    let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    return `${months[date.getMonth()]} ${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`
   }
 
   getTextPostPart = () => {
@@ -157,26 +176,55 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
   }
 
   getImagePostPart = () => {
+    const classes = this.props.classes
     const post = this.state.post
     const fbUser = getFBAuth().currentUser
     const dots: Array<ReactNode> = []
-    post.imageData!.results.forEach(({x, y}, i) => {
-      dots.push(<div
-        key={i}
-        className={this.props.classes.imageVoteDot}
-        style={{
-          left: `${x * 100}%`,
-          top: `${y * 100}%`,
-        }}/>)
+    post.imageData!.results.forEach(({x, y}, userID) => {
+      if (userID === fbUser?.uid) {
+        dots.push(<div
+          key={userID}
+          style={{
+            position: 'absolute',
+            left: `${x * 100}%`,
+            top: `${y * 100}%`,
+            width: '36px',
+            height: '50.6px',
+            transform: 'translate(-50%, -100%)',
+          }}>
+          <img style={{position: 'absolute'}} src={'/pin.svg'} alt={'pin'} width="36px"/>
+          {fbUser.photoURL ? <img
+            style={{
+              position: 'absolute',
+              borderRadius: '50%',
+              top: '7px',
+              left: '6px',
+            }}
+            src={fbUser.photoURL}
+            alt={''}
+            width="24px"
+            height="24px"/> : null}
+        </div>)
+      } else {
+        dots.push(<div
+          key={userID}
+          className={classes.imageVoteDot}
+          style={{
+            left: `${x * 100}%`,
+            top: `${y * 100}%`,
+          }}/>)
+      }
+
     })
     return this.state.imageDownloadUrl ?
       <div style={{
+        marginTop: '16px',
         position: 'relative',
         aspectRatio: `${post.imageData!.size.width}/${post.imageData!.size.height}`,
       }}>
         <img src={this.state.imageDownloadUrl}
              alt={'vote'}
-             style={{width: '100%'}}
+             className={classes.voteImage}
              onClick={e => {
                if (fbUser) {
                  // @ts-ignore
@@ -190,7 +238,10 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
              }}/>
         {dots}
       </div> :
-      <span>Loading</span>
+      <div className={classes.imageLoadPlaceHolder}
+           style={{aspectRatio: `${post.imageData!.size.width}/${post.imageData!.size.height}`}}>
+        <CircularProgress/>
+      </div>
   }
 }
 

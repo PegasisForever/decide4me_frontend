@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   width="439.26999"
+   height="617.94202"
+   viewBox="0 0 439.26997 617.94198"
+   xml:space="preserve"
+   sodipodi:docname="pin.svg"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)"><metadata
+   id="metadata43"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs41"><filter
+     style="color-interpolation-filters:sRGB"
+     inkscape:label="Drop Shadow"
+     id="filter953"><feFlood
+       flood-opacity="0.498039"
+       flood-color="rgb(0,0,0)"
+       result="flood"
+       id="feFlood943" /><feComposite
+       in="flood"
+       in2="SourceGraphic"
+       operator="in"
+       result="composite1"
+       id="feComposite945" /><feGaussianBlur
+       in="composite1"
+       stdDeviation="14"
+       result="blur"
+       id="feGaussianBlur947" /><feOffset
+       dx="0"
+       dy="0"
+       result="offset"
+       id="feOffset949" /><feComposite
+       in="SourceGraphic"
+       in2="offset"
+       operator="over"
+       result="composite2"
+       id="feComposite951" /></filter></defs><sodipodi:namedview
+   pagecolor="#80767b"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="1"
+   inkscape:pageshadow="2"
+   inkscape:window-width="2426"
+   inkscape:window-height="1365"
+   id="namedview39"
+   showgrid="false"
+   inkscape:zoom="1.3884789"
+   inkscape:cx="257.47601"
+   inkscape:cy="257.47601"
+   inkscape:window-x="0"
+   inkscape:window-y="480"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Capa_1"
+   inkscape:document-rotation="0"
+   inkscape:pagecheckerboard="false" />
+<g
+   id="g6"
+   style="opacity:1;fill:#fefeff;fill-opacity:1;filter:url(#filter953)"
+   transform="matrix(-1.0000009,0,0,-0.99999991,477.11125,566.44619)">
+	<g
+   id="g4"
+   style="fill:#fefeff;fill-opacity:1">
+		<path
+   d="M 316.099,85.846 C 291.513,50.526 270.278,20.019 265.125,5.413 c -1.139,-3.215 -4.145,-5.372 -7.554,-5.414 -3.15,0.096 -6.476,2.044 -7.68,5.227 -5.244,13.812 -25.405,42.765 -48.752,76.314 -53.468,76.786 -126.692,181.954 -126.692,250.377 0,100.926 82.103,183.034 183.029,183.034 100.926,0 183.029,-82.108 183.029,-183.034 0,-67.317 -71.906,-170.632 -124.406,-246.071 z"
+   id="path2"
+   style="fill:#fefeff;fill-opacity:1" />
+	</g>
+</g>
+<g
+   id="g8">
+</g>
+<g
+   id="g10">
+</g>
+<g
+   id="g12">
+</g>
+<g
+   id="g14">
+</g>
+<g
+   id="g16">
+</g>
+<g
+   id="g18">
+</g>
+<g
+   id="g20">
+</g>
+<g
+   id="g22">
+</g>
+<g
+   id="g24">
+</g>
+<g
+   id="g26">
+</g>
+<g
+   id="g28">
+</g>
+<g
+   id="g30">
+</g>
+<g
+   id="g32">
+</g>
+<g
+   id="g34">
+</g>
+<g
+   id="g36">
+</g>
+</svg>
