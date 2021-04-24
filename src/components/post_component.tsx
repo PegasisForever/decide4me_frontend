@@ -80,10 +80,12 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
     post: Post,
     imageDownloadUrl: string | null,
     showImageHelp: boolean,
+    windowWidth: number,
   } = {
     post: this.props.post,
     imageDownloadUrl: null,
     showImageHelp: false,
+    windowWidth: window.innerWidth,
   }
 
   cancelRealTimeUpdateFn: null | (() => void) = null
@@ -95,6 +97,13 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
         imageDownloadUrl: url,
       }))
     }
+    window.addEventListener('resize', this.onResize)
+  }
+
+  onResize = () => {
+    this.setState({
+      windowWidth: window.innerWidth,
+    })
   }
 
   componentDidUpdate = () => {
@@ -118,6 +127,7 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
       this.cancelRealTimeUpdateFn()
       this.cancelRealTimeUpdateFn = null
     }
+    window.removeEventListener('resize', this.onResize)
   }
 
   render = () => {
@@ -177,6 +187,7 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
             }
           }}>
           <motion.div
+            key={this.state.windowWidth}
             style={{
               position: 'absolute',
               left: '-2px',
