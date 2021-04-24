@@ -14,7 +14,20 @@ const testPost = new Post(
   55,
   10,
   new TextPostData(
-    new Map<string, number>([['aaaaa', 1], ['bbbbbbbb', 2], ['cccccccccc', 3]]),
+    [
+      {
+        text: 'aaaaaaaaaaa',
+        vote: 1,
+      },
+      {
+        text: 'bbbbbbbbbbbbbb',
+        vote: 2,
+      },
+      {
+        text: 'ccccccccccccccccc',
+        vote: 3,
+      },
+    ],
   ),
   null,
 )

@@ -6,15 +6,15 @@ export class Post {
     public time: Date,
     public views: number,
     public targetVotes: number,
-    public textData: TextPostData|null,
-    public imageData: ImagePostData|null,
+    public textData: TextPostData | null,
+    public imageData: ImagePostData | null,
   ) {
   }
 }
 
 export class TextPostData {
   constructor(
-    public choices: Map<string, number>,
+    public choices: Array<{ text: string, vote: number }>,
   ) {
   }
 }
