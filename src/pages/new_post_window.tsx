@@ -94,6 +94,7 @@ type NewPostTextProps = {
 
 function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
   const [focusedKey, setFocusedKey] = useState(textPostChoices[0].key)
+  console.log(focusedKey, textPostChoices)
 
   return <>
     {textPostChoices.map(({text, key}, i) => <TextField
@@ -106,12 +107,18 @@ function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
         setTextPostChoices(newList)
       }}
       onKeyDown={e => {
-        if (e.code === 'Enter') {
+        if (e.code === 'Enter' && text !== '') {
           const newList = [...textPostChoices]
           const newKey = Math.random()
           newList.splice(i + 1, 0, {text: '', key: newKey})
           setFocusedKey(newKey)
           setTextPostChoices(newList)
+        } else if (e.code === 'Backspace' && text === '' && i !== 0) {
+          const newList = [...textPostChoices]
+          newList.splice(i, 1)
+          setFocusedKey(textPostChoices[i - 1].key)
+          setTextPostChoices(newList)
+          // todo fix focus
         }
       }}
     />)}

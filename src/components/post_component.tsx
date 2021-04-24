@@ -49,7 +49,7 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
   }
 
   getImagePostPart = () => {
-    let post = this.state.post
+    // let post = this.state.post
     return <div>
       image part
     </div>
