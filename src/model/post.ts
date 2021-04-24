@@ -42,7 +42,11 @@ export class Post {
     if (data['text']) {
       textData = new TextPostData(data['text']['choices'], new Map(Object.entries(data['text']['results'])))
     } else if (data['image']) {
-      imageData = new ImagePostData(data['image']['imageUrl'], new Map(Object.entries(data['image']['results'])))
+      imageData = new ImagePostData(
+        data['image']['imageUrl'],
+        new Map(Object.entries(data['image']['results'])),
+        data['image']['size'],
+      )
     }
     return new Post(
       doc.id,
@@ -65,7 +69,10 @@ export class Post {
     if (json['text']) {
       textData = new TextPostData(json['text']['choices'], new Map(Object.entries(json['text']['results'])))
     } else if (json['image']) {
-      imageData = new ImagePostData(json['image']['imageUrl'], new Map(Object.entries(json['image']['results'])))
+      imageData = new ImagePostData(json['image']['imageUrl'],
+        new Map(Object.entries(json['image']['results'])),
+        json['image']['size'],
+      )
     }
     return new Post(
       id,
@@ -95,6 +102,7 @@ export class ImagePostData {
   constructor(
     public imageUrl: string,
     public results: Map<string, { x: number, y: number }>,
+    public size: { width: number, height: number },
   ) {
   }
 }

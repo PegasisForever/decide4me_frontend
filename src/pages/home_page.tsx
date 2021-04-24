@@ -9,6 +9,17 @@ import {network} from '../network/network'
 import {useAuthState} from 'react-firebase-hooks/auth'
 import {getFBAuth} from '../auth'
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    postList: {
+      marginTop: '68px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+  }),
+)
+
 export function HomePage() {
   const [, isLoading] = useAuthState(getFBAuth())
 
@@ -20,8 +31,9 @@ export function HomePage() {
 }
 
 function PostsList() {
+  const classes = useStyles()
   const [posts] = usePromise(() => network.getRecommendation(), [])
-  return <Box marginTop={'68px'}>
+  return <Box className={classes.postList} marginTop={'68px'}>
     {posts?.map(post => <PostComponent key={post.id} post={post}/>)}
   </Box>
 }

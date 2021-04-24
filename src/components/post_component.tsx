@@ -1,7 +1,7 @@
 import {Post} from '../model/post'
 import React, {Component, ReactNode} from 'react'
-import {Box} from '@material-ui/core'
-import {PropsWithVisible} from '../utils'
+import {Box, Paper, Typography, withStyles} from '@material-ui/core'
+import {PropsWithClasses, PropsWithVisible} from '../utils'
 // @ts-ignore
 import {withIsVisible} from 'react-is-visible'
 import {getFBAuth} from '../auth'
@@ -10,17 +10,32 @@ import {network} from '../network/network'
 
 let storage = firebase.storage()
 
-class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
+const styles = {
+  imageVoteDot: {
+    position: 'absolute',
+    width: '8px',
+    height: '8px',
+    backgroundColor: 'white',
+  },
+  card: {
+    margin: '16px',
+    width: '100%',
+    maxWidth: '700px',
+    overflowWrap: 'break-word',
+  },
+  textVoteList: {
+    margin: '16px',
+  },
+  textVoteItem: {},
+}
+
+class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post: Post }>>> {
   state: {
     post: Post,
     imageDownloadUrl: string | null,
-    imageWidth: number | null,
-    imageHeight: number | null,
   } = {
     post: this.props.post,
     imageDownloadUrl: null,
-    imageWidth: null,
-    imageHeight: null,
   }
 
   cancelRealTimeUpdateFn: null | (() => void) = null
@@ -59,38 +74,53 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
 
   render = () => {
     let post = this.state.post
-    return <Box border={'2px solid black'}>
-      <h3>{post.title}</h3>
-      <p>{post.time.toDateString()}</p>
-      <p>{post.description}</p>
+    return <Paper className={this.props.classes.card} elevation={2}>
+      <Typography>{post.title}</Typography>
+      <Typography>{post.time.toDateString()}</Typography>
+      <Typography>{post.description}</Typography>
       {post.textData ? this.getTextPostPart() : this.getImagePostPart()}
-    </Box>
+    </Paper>
   }
 
   getTextPostPart = () => {
     let post = this.state.post
     let fbUser = getFBAuth().currentUser
     const myChoice = post.textData!.results.get(fbUser?.uid || '')
+    let totalVote = post.textData!.results.size
     const choiceLis: Array<ReactNode> = []
     post.textData!.choices.forEach(({text, vote}, i) => {
-      choiceLis.push(<li
-        key={i}
-        style={{backgroundColor: (myChoice === i) ? 'grey' : 'transparent'}}
-        onClick={() => {
-          if (i !== myChoice && fbUser) {
-            post.voteText(i)
-            if (myChoice) post.textData!.choices[myChoice].vote--
-            post.textData!.choices[i].vote++
-            post.textData!.results.set(fbUser.uid || '', i)
-            this.setState({})
-          }
-        }}>
-        {text}: {vote}
-      </li>)
+      let widthPercent = 0
+      if (totalVote !== 0) {
+        widthPercent = vote / totalVote
+      }
+      choiceLis.push(<Typography>
+        <Box width={'100%'} height={'1.9rem'} margin={'4px 0'} position={'relative'}
+             boxSizing={'border-box'}
+             border={`2px solid ${(myChoice === i) ? '#3f51b5' : '#b3b7ff'}`} borderRadius="4px"
+             className={this.props.classes.textVoteItem}
+             key={i}
+             onClick={() => {
+               if (i !== myChoice && fbUser) {
+                 post.voteText(i)
+                 if (myChoice) post.textData!.choices[myChoice].vote--
+                 post.textData!.choices[i].vote++
+                 post.textData!.results.set(fbUser.uid || '', i)
+                 this.setState({})
+               }
+             }}>
+          {widthPercent !== 0 ? <Box position={'absolute'} left="-1px" top="-1px" bottom="-1px"
+                                     width={`calc(${widthPercent * 100}% + 2px)`}
+                                     borderRadius="4px"
+                                     bgcolor={(myChoice === i) ? '#3f51b5' : '#b3b7ff'}/> : null}
+          <Typography style={{position: 'absolute', color: (myChoice === i) ? 'white' : 'black', lineHeight: '1.8rem',paddingLeft:'4px'}}>
+            {text}: {vote}
+          </Typography>
+        </Box>
+      </Typography>)
     })
-    return <ol>
+    return <div className={this.props.classes.textVoteList}>
       {choiceLis}
-    </ol>
+    </div>
   }
 
   getImagePostPart = () => {
@@ -100,19 +130,16 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
     post.imageData!.results.forEach(({x, y}, i) => {
       dots.push(<div
         key={i}
+        className={this.props.classes.imageVoteDot}
         style={{
-          position: 'absolute',
-          width: '8px',
-          height: '8px',
           left: `${x * 100}%`,
           top: `${y * 100}%`,
-          backgroundColor: 'white',
         }}/>)
     })
     return this.state.imageDownloadUrl ?
       <div style={{
         position: 'relative',
-        aspectRatio: this.state.imageWidth ? `${this.state.imageWidth}/${this.state.imageHeight}` : undefined,
+        aspectRatio: `${post.imageData!.size.width}/${post.imageData!.size.height}`,
       }}>
         <img src={this.state.imageDownloadUrl}
              alt={'vote'}
@@ -127,14 +154,6 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
                  post.imageData!.results.set(getFBAuth().currentUser!.uid, {x: xPercent, y: yPercent})
                  this.setState({})
                }
-             }}
-             onLoad={e => {
-               this.setState({
-                 // @ts-ignore
-                 imageWidth: e.target.width,
-                 // @ts-ignore
-                 imageHeight: e.target.height,
-               })
              }}/>
         {dots}
       </div> :
@@ -142,4 +161,5 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
   }
 }
 
-export const PostComponent = withIsVisible(_PostComponent)
+// @ts-ignore
+export const PostComponent = withStyles(styles)(withIsVisible(_PostComponent))
