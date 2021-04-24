@@ -4,6 +4,7 @@ import {Box} from '@material-ui/core'
 import {getFBAuth} from '../auth'
 import {StyledFirebaseAuth} from 'react-firebaseui'
 import firebase from 'firebase/app'
+import {network} from '../network/network'
 
 export function LoginWindow({onClose}: { onClose: () => void }) {
   return <Window onClick={onClose} center>
@@ -17,6 +18,7 @@ export function LoginWindow({onClose}: { onClose: () => void }) {
         callbacks: {
           signInSuccessWithAuthResult: function (authResult, redirectUrl) {
             console.log('success', authResult, redirectUrl)
+            network.register(authResult.user)
             onClose()
             return true
           },
