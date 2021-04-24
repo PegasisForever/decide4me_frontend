@@ -23,6 +23,7 @@ export function NewPostWindow() {
   const [isLoading, setIsLoading] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [targetVotes, setTargetVotes] = useState('10')
   const [isText, setIsText] = useState(true)
   const [textPostChoices, setTextPostChoices] = useState<Array<{ text: string, key: number }>>([{
     text: '',
@@ -35,7 +36,7 @@ export function NewPostWindow() {
   const post = async () => {
     if (isText) {
       setIsLoading(true)
-      await network.newTextPost(title, description, textPostChoices.map(c => c.text), 10)
+      await network.newTextPost(title, description, textPostChoices.map(c => c.text), parseInt(targetVotes))
     } else {
 
     }
@@ -63,6 +64,17 @@ export function NewPostWindow() {
             Image
           </ToggleButton>
         </ToggleButtonGroup>
+        <div>
+          <span>Notify me when more than </span>
+          <TextField
+            label="Number"
+            type="number"
+            variant="filled"
+            value={targetVotes}
+            onChange={e => setTargetVotes(e.target.value)}
+          />
+          <span> people voted</span>
+        </div>
         {isText ? <NewPostText textPostChoices={textPostChoices} setTextPostChoices={setTextPostChoices}/> : null}
         {isLoading ? <span>Loading</span> : <Button variant="outlined" onClick={post}>Upload</Button>}
       </div>
