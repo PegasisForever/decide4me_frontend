@@ -3,7 +3,6 @@ import {Post, TextPostData} from './model/post'
 import {PostComponent} from './components/post_component'
 import {HomeNavbar} from './components/home_navbar'
 import {Box} from '@material-ui/core'
-import {LoginWindow} from './pages/login_window'
 
 const testPost = new Post(
   'user_id',
