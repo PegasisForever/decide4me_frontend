@@ -5,8 +5,18 @@ import {getFBAuth} from '../auth'
 import {StyledFirebaseAuth} from 'react-firebaseui'
 import firebase from 'firebase/app'
 import {network} from '../network/network'
+import {useHistory} from 'react-router-dom'
+import {useAuthState} from 'react-firebase-hooks/auth'
 
-export function LoginWindow({onClose}: { onClose: () => void }) {
+export function LoginWindow() {
+  const history = useHistory()
+  const [user] = useAuthState(getFBAuth())
+  const onClose = () => {
+    history.replace('/')
+  }
+
+  if (user) onClose()
+
   return <Window onClick={onClose} center>
     <NormalWindowContainer>
       <Box display={'flex'} justifyContent={'space-between'}>
@@ -19,7 +29,6 @@ export function LoginWindow({onClose}: { onClose: () => void }) {
           signInSuccessWithAuthResult: function (authResult, redirectUrl) {
             console.log('success', authResult, redirectUrl)
             network.register(authResult.user)
-            onClose()
             return true
           },
           signInFailure: function (e) {

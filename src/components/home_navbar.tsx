@@ -3,8 +3,8 @@ import {Box, createStyles, makeStyles, Theme} from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import {getFBAuth} from '../auth'
 import {useAuthState} from 'react-firebase-hooks/auth'
-import {LoginWindow} from '../pages/login_window'
 import {Window} from './window'
+import {useHistory} from 'react-router-dom'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,16 +24,14 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export function HomeNavbar() {
+  const history = useHistory()
   const [user] = useAuthState(getFBAuth())
-  // if(user) user.getIdToken(true).then(console.log)
-  const [showLogin, setShowLogin] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
   const classes = useStyles()
   return <Box className={classes.bar}>
     Decide4me
     {user ? <img alt={'profile'} onClick={() => setShowLogout(!showLogout)} src={user.photoURL || ''}/> :
-      <Button variant="outlined" onClick={() => setShowLogin(true)}>Login</Button>}
-    {(showLogin && !user) ? <LoginWindow onClose={() => setShowLogin(false)}/> : null}
+      <Button variant="outlined" onClick={() => history.push('/login')}>Login</Button>}
     {(showLogout && user) ? <LogoutOverlay onClose={() => setShowLogout(false)}/> : null}
   </Box>
 }
@@ -42,12 +40,12 @@ const useLogoutWindowStyles = makeStyles((theme: Theme) =>
   createStyles({
     windowContainer: {
       zIndex: 2001,
-      position:'fixed',
+      position: 'fixed',
       border: '2px solid black',
       backgroundColor: 'white',
       right: '4px',
       top: '64px',
-      width: '128px'
+      width: '128px',
     },
   }),
 )

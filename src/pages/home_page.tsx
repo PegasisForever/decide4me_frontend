@@ -4,6 +4,7 @@ import {PostComponent} from '../components/post_component'
 import React from 'react'
 import {Post, TextPostData} from '../model/post'
 import CreateIcon from '@material-ui/icons/Create'
+import {useHistory} from 'react-router-dom'
 
 const testPost = new Post(
   'user_id',
@@ -44,8 +45,9 @@ const useNewPostButtonStyles = makeStyles((theme: Theme) =>
 
 function NewPostButton() {
   const classes = useNewPostButtonStyles()
+  const history = useHistory()
 
-  return <Fab variant="extended" className={classes.fab}>
+  return <Fab variant="extended" className={classes.fab} onClick={() => history.push('/new_post')}>
     <CreateIcon className={classes.icon}/>
     Decide for me
   </Fab>
