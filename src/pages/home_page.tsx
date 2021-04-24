@@ -1,24 +1,16 @@
 import {HomeNavbar} from '../components/home_navbar'
-import {Box, createStyles, Fab, makeStyles, Theme} from '@material-ui/core'
-import React from 'react'
+import {CircularProgress, createStyles, Fab, makeStyles, Theme, Typography} from '@material-ui/core'
+import React, {useEffect, useRef, useState} from 'react'
 import CreateIcon from '@material-ui/icons/Create'
 import {useHistory} from 'react-router-dom'
-import usePromise from 'react-use-promise'
 import {PostComponent} from '../components/post_component'
 import {network} from '../network/network'
 import {useAuthState} from 'react-firebase-hooks/auth'
 import {getFBAuth} from '../auth'
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    postList: {
-      marginTop: '68px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-  }),
-)
+// @ts-ignore
+import {useIsVisible} from 'react-is-visible'
+import {Post} from '../model/post'
+import {User} from '../model/user'
 
 export function HomePage() {
   const [, isLoading] = useAuthState(getFBAuth())
@@ -30,12 +22,83 @@ export function HomePage() {
   </div>
 }
 
-function PostsList() {
-  const classes = useStyles()
-  const [recommendationList] = usePromise(() => network.getRecommendation(), [])
-  return <Box className={classes.postList} marginTop={'68px'}>
-    {recommendationList?.map(({post, user}) => <PostComponent key={post.id} post={post} user={user}/>)}
-  </Box>
+class PostsList extends React.Component {
+  state: {
+    list: Array<{ post: Post, user: User }> | null,
+    noMore: boolean,
+  } = {
+    list: null,
+    noMore: false,
+  }
+
+  componentDidMount = () => {
+    network.getRecommendation(0).then(list => {
+      this.setState({list})
+    })
+  }
+
+  loadMore = () => {
+    network.getRecommendation(this.state.list!.length).then(list => {
+      if (list.length === 0) {
+        this.setState({
+          noMore: true,
+        })
+      } else {
+        this.setState({list: [...this.state.list!, ...list]})
+      }
+    })
+  }
+
+  render() {
+    return <div style={{
+      marginTop: '68px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    }}>
+      {this.state.list?.map(({post, user}) => <PostComponent key={post.id} post={post} user={user}/>)}
+      {(this.state.list && !this.state.noMore) ? <LoadMore key={this.state.list.length} onLoad={this.loadMore}/> : null}
+      {this.state.noMore ? <NoMore/> : null}
+    </div>
+  }
+}
+
+function LoadMore({onLoad}: { onLoad: () => void }) {
+  const nodeRef = useRef<HTMLElement>()
+  const isVisible = useIsVisible(nodeRef)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    if (isVisible && !loaded) {
+      setLoaded(true)
+      onLoad()
+      console.log('load')
+    }
+  }, [isVisible, loaded, setLoaded, onLoad])
+
+  // @ts-ignore
+  return <div ref={nodeRef}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '108px',
+                marginTop: '16px',
+              }}>
+    <CircularProgress/>
+  </div>
+}
+
+function NoMore() {
+  return <div style={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: '108px',
+    marginTop: '16px',
+  }}>
+    <Typography>You've reached the end.</Typography>
+  </div>
 }
 
 const useNewPostButtonStyles = makeStyles((theme: Theme) =>

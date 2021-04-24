@@ -204,7 +204,7 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
             style={{
               position: 'absolute',
               borderRadius: '50%',
-              top: '7px',
+              top: '7.5px',
               left: '6px',
             }}
             src={fbUser.photoURL}
