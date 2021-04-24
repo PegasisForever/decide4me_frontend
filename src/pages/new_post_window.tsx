@@ -67,6 +67,7 @@ export function NewPostWindow() {
     if (!isUserLoading && !user) {
       history.push('/login', {from: '/new_post', title: 'Login to Post'})
     }
+    // eslint-disable-next-line
   }, [user, isUserLoading])
 
   const onClose = () => {

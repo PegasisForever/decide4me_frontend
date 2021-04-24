@@ -35,6 +35,7 @@ export function LoginWindow() {
 
   useEffect(() => {
     if (user) onSuccess()
+    // eslint-disable-next-line
   }, [])
 
   return <Window onClick={onCancel} center>

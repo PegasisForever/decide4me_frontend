@@ -1,13 +1,15 @@
 import {Post} from '../model/post'
 import React, {Component, ReactNode} from 'react'
 import {Box, CircularProgress, Paper, Typography, withStyles} from '@material-ui/core'
-import {PropsWithClasses, PropsWithVisible} from '../utils'
+import {PropsWithClasses, PropsWithHistory, PropsWithVisible} from '../utils'
 // @ts-ignore
 import {withIsVisible} from 'react-is-visible'
 import {getFBAuth} from '../auth'
 import firebase from 'firebase/app'
 import {network} from '../network/network'
 import {User} from '../model/user'
+import {withRouter} from 'react-router-dom'
+
 
 let storage = firebase.storage()
 
@@ -31,7 +33,9 @@ const styles = {
   textVoteList: {
     marginTop: '16px',
   },
-  textVoteItem: {},
+  textVoteItem: {
+    cursor: 'pointer',
+  },
   profileImage: {
     width: '48px',
     height: '48px',
@@ -54,6 +58,7 @@ const styles = {
   voteImage: {
     width: '100%',
     borderRadius: '4px',
+    cursor: 'pointer',
   },
   imageLoadPlaceHolder: {
     width: '100%',
@@ -63,7 +68,7 @@ const styles = {
   },
 }
 
-class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post: Post, user: User }>>> {
+class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWithVisible<{ post: Post, user: User }>>>> {
   state: {
     post: Post,
     imageDownloadUrl: string | null,
@@ -153,6 +158,8 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
                  post.textData!.choices[i].vote++
                  post.textData!.results.set(fbUser.uid || '', i)
                  this.setState({})
+               } else if (!fbUser) {
+                 this.props.history.push('/login', {from: '/', title: 'Login to Vote'})
                }
              }}>
           {widthPercent !== 0 ? <Box position={'absolute'} left="-2px" top="-2px" bottom="-2px"
@@ -214,7 +221,6 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
             top: `${y * 100}%`,
           }}/>)
       }
-
     })
     return this.state.imageDownloadUrl ?
       <div style={{
@@ -234,6 +240,8 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
                  network.voteImage(post.id, xPercent, yPercent)
                  post.imageData!.results.set(getFBAuth().currentUser!.uid, {x: xPercent, y: yPercent})
                  this.setState({})
+               } else {
+                 this.props.history.push('/login', {from: '/', title: 'Login to Vote'})
                }
              }}/>
         {dots}
@@ -246,4 +254,4 @@ class _PostComponent extends Component<PropsWithClasses<PropsWithVisible<{ post:
 }
 
 // @ts-ignore
-export const PostComponent = withStyles(styles)(withIsVisible(_PostComponent))
+export const PostComponent = withStyles(styles)(withIsVisible(withRouter(_PostComponent)))
