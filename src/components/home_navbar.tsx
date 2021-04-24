@@ -31,7 +31,7 @@ export function HomeNavbar() {
   const classes = useStyles()
   return <Box className={classes.bar}>
     Decide4me
-    {user ? <img onClick={() => setShowLogout(!showLogout)} src={user.photoURL || ''}/> :
+    {user ? <img alt={'profile'} onClick={() => setShowLogout(!showLogout)} src={user.photoURL || ''}/> :
       <Button variant="outlined" onClick={() => setShowLogin(true)}>Login</Button>}
     {(showLogin && !user) ? <LoginWindow onClose={() => setShowLogin(false)}/> : null}
     {(showLogout && user) ? <LogoutOverlay onClose={() => setShowLogout(false)}/> : null}

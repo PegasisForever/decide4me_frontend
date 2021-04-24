@@ -1,7 +1,8 @@
 import {Redirect, Route} from 'react-router-dom'
 import firebase from 'firebase/app'
 
-const firebaseConfig ={
+
+const firebaseConfig = {
   apiKey: 'AIzaSyD6nKZYaW0ReZBVO0zY7_7HGwGuUnzIzCg',
   authDomain: 'decide4me-pegasis.firebaseapp.com',
   projectId: 'decide4me-pegasis',

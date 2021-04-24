@@ -1,8 +1,9 @@
 import {HomeNavbar} from '../components/home_navbar'
-import {Box} from '@material-ui/core'
+import {Box, createStyles, Fab, makeStyles, Theme} from '@material-ui/core'
 import {PostComponent} from '../components/post_component'
 import React from 'react'
 import {Post, TextPostData} from '../model/post'
+import CreateIcon from '@material-ui/icons/Create'
 
 const testPost = new Post(
   'user_id',
@@ -23,5 +24,29 @@ export function HomePage() {
     <Box marginTop={'68px'}>
       <PostComponent post={testPost}/>
     </Box>
+    <NewPostButton/>
   </div>
+}
+
+const useNewPostButtonStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    fab: {
+      position: 'fixed',
+      bottom: '32px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
+    icon: {
+      marginRight: theme.spacing(1),
+    },
+  }),
+)
+
+function NewPostButton() {
+  const classes = useNewPostButtonStyles()
+
+  return <Fab variant="extended" className={classes.fab}>
+    <CreateIcon className={classes.icon}/>
+    Decide for me
+  </Fab>
 }
