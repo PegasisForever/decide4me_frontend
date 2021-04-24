@@ -1,10 +1,10 @@
 import {NormalWindowContainer, Window, WindowContainerTitle} from '../components/window'
-import React from 'react'
+import React, {useEffect} from 'react'
 import {getFBAuth} from '../auth'
 import {StyledFirebaseAuth} from 'react-firebaseui'
 import firebase from 'firebase/app'
 import {network} from '../network/network'
-import {useHistory} from 'react-router-dom'
+import {useHistory, useLocation} from 'react-router-dom'
 import {useAuthState} from 'react-firebase-hooks/auth'
 import {createStyles, makeStyles, Theme} from '@material-ui/core'
 
@@ -19,25 +19,37 @@ const useStyles = makeStyles((theme: Theme) =>
 export function LoginWindow() {
   const classes = useStyles()
   const history = useHistory()
+  let location = useLocation()
   const [user] = useAuthState(getFBAuth())
-  const onClose = () => {
-    history.replace('/')
+
+  let from = '/'
+  let title = 'Login'
+  if (location.state) {
+    from = (location.state as any).from || '/'
+    title = (location.state as any).title || 'Login'
   }
 
-  if (user) onClose()
+  console.log(from)
+  const onCancel = () => history.replace('/')
+  const onSuccess = () => history.replace(from)
 
-  return <Window onClick={onClose} center>
+  useEffect(() => {
+    if (user) onSuccess()
+  }, [])
+
+  return <Window onClick={onCancel} center>
     <NormalWindowContainer height={'300px'}>
-      <WindowContainerTitle title={'Login'} onClose={onClose}/>
+      <WindowContainerTitle title={title} onClose={onCancel}/>
       <StyledFirebaseAuth className={classes.loginDiv} uiConfig={{
         signInFlow: 'popup',
         callbacks: {
-          signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+          signInSuccessWithAuthResult: (authResult, redirectUrl) => {
             console.log('success', authResult, redirectUrl)
             network.register(authResult.user)
-            return true
+            onSuccess()
+            return false
           },
-          signInFailure: function (e) {
+          signInFailure: (e) => {
             console.error(e)
           },
         },

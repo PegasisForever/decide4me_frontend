@@ -1,11 +1,12 @@
 import {NormalWindowContainer, Window, WindowContainerTitle} from '../components/window'
 import {Box, Checkbox, createStyles, makeStyles, TextField, Theme, Typography} from '@material-ui/core'
-import React, {useCallback, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {ToggleButton, ToggleButtonGroup} from '@material-ui/lab'
 import Button from '@material-ui/core/Button'
 import {network} from '../network/network'
 import {useDropzone} from 'react-dropzone'
+import {getFBAuth} from '../auth'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,6 +50,12 @@ export function NewPostWindow() {
     key: Math.random(),
   }])
   const [imageFile, setImageFile] = useState<File | null>(null)
+
+  useEffect(() => {
+    if (!getFBAuth().currentUser) {
+      history.push('/login', {from: '/new_post',title:'Login to Post'})
+    }
+  }, [])
 
   const onClose = () => {
     history.goBack()
