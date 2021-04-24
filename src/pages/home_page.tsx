@@ -6,15 +6,18 @@ import CreateIcon from '@material-ui/icons/Create'
 import {useHistory} from 'react-router-dom'
 import usePromise from 'react-use-promise'
 import {PostComponent} from '../components/post_component'
+import {useAuthState} from 'react-firebase-hooks/auth'
+import {getFBAuth} from '../auth'
 
 export function HomePage() {
+  const [user] = useAuthState(getFBAuth())
   const [post] = usePromise(() => Post.getFromID('NCvcO7YgEu1UT52GbrUy'), [])
 
   return <div>
     <HomeNavbar/>
-    <Box marginTop={'68px'}>
+    {user ? <Box marginTop={'68px'}>
       {post ? <PostComponent post={post}/> : null}
-    </Box>
+    </Box> : null}
     <NewPostButton/>
   </div>
 }

@@ -4,6 +4,7 @@ import {Box} from '@material-ui/core'
 import {PropsWithVisible} from '../utils'
 // @ts-ignore
 import {withIsVisible} from 'react-is-visible'
+import {getFBAuth} from '../auth'
 
 class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
   state = {
@@ -39,9 +40,23 @@ class _PostComponent extends Component<PropsWithVisible<{ post: Post }>> {
 
   getTextPostPart = () => {
     let post = this.state.post
+    const myChoice = post.textData!.results.get(getFBAuth().currentUser!.uid)
     const choiceLis: Array<ReactNode> = []
-    post.textData!.choices.forEach(({text, vote}) => {
-      choiceLis.push(<li key={text}>{text}: {vote}</li>)
+    post.textData!.choices.forEach(({text, vote}, i) => {
+      choiceLis.push(<li
+        key={text}
+        style={{backgroundColor: (myChoice === i) ? 'grey' : 'transparent'}}
+        onClick={() => {
+          if (i !== myChoice) {
+            post.voteText(i)
+            if (myChoice) post.textData!.choices[myChoice].vote--
+            post.textData!.choices[i].vote++
+            post.textData!.results.set(getFBAuth().currentUser!.uid, i)
+            this.setState({})
+          }
+        }}>
+        {text}: {vote}
+      </li>)
     })
     return <ol>
       {choiceLis}

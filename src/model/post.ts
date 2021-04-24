@@ -1,4 +1,5 @@
 import firebase from 'firebase/app'
+import {network} from '../network/network'
 
 const db = firebase.firestore()
 
@@ -22,6 +23,10 @@ export class Post {
       .onSnapshot((doc) => {
         cb(Post.getFromDoc(doc))
       })
+  }
+
+  voteText = async (i: number) => {
+    await network.voteText(this.id, i)
   }
 
   static async getFromID(id: string): Promise<Post> {

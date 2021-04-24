@@ -39,4 +39,12 @@ export const network = {
       headers: {'Content-Type': 'multipart/form-data'},
     })
   },
+
+  async voteText(postID: string, choiceIndex: number): Promise<void> {
+    await axios.post(baseUrl + '/vote/text', {
+      idToken: await getFBAuth().currentUser!.getIdToken(),
+      postID,
+      choiceIndex,
+    })
+  },
 }
