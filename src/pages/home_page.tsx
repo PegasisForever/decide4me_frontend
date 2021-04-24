@@ -1,42 +1,19 @@
 import {HomeNavbar} from '../components/home_navbar'
 import {Box, createStyles, Fab, makeStyles, Theme} from '@material-ui/core'
-import {PostComponent} from '../components/post_component'
 import React from 'react'
-import {Post, TextPostData} from '../model/post'
+import {Post} from '../model/post'
 import CreateIcon from '@material-ui/icons/Create'
 import {useHistory} from 'react-router-dom'
-
-const testPost = new Post(
-  'user_id',
-  'Title',
-  'desc desc desc desc desc desc desc desc ',
-  new Date(),
-  55,
-  10,
-  new TextPostData(
-    [
-      {
-        text: 'aaaaaaaaaaa',
-        vote: 1,
-      },
-      {
-        text: 'bbbbbbbbbbbbbb',
-        vote: 2,
-      },
-      {
-        text: 'ccccccccccccccccc',
-        vote: 3,
-      },
-    ],
-  ),
-  null,
-)
+import usePromise from 'react-use-promise'
+import {PostComponent} from '../components/post_component'
 
 export function HomePage() {
+  const [post] = usePromise(() => Post.getFromID('NCvcO7YgEu1UT52GbrUy'), [])
+
   return <div>
     <HomeNavbar/>
     <Box marginTop={'68px'}>
-      <PostComponent post={testPost}/>
+      {post ? <PostComponent post={post}/> : null}
     </Box>
     <NewPostButton/>
   </div>

@@ -116,6 +116,7 @@ function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
       }}
     />)}
   </>
+  // todo delete post
 }
 
 type NewPostImageProps = {
