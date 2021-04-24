@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'white',
       width: '50%',
       height: '50%',
+      overflowY: 'scroll',
     },
   }),
 )
@@ -41,7 +42,7 @@ export function Window(props: PropsWithChildren<WindowProps>) {
 
 export function NormalWindowContainer(props: PropsWithChildren<{}>) {
   const classes = useStyles()
-  return <Box className={classes.windowContainer}>
+  return <Box className={classes.windowContainer} onClick={e => e.stopPropagation()}>
     {props.children}
   </Box>
 }
