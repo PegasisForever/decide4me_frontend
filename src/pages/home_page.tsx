@@ -22,6 +22,8 @@ export function HomePage() {
   </div>
 }
 
+export let refreshPost: (() => void) | null = null
+
 class PostsList extends React.Component {
   state: {
     list: Array<{ post: Post, user: User }> | null,
@@ -35,6 +37,7 @@ class PostsList extends React.Component {
     network.getRecommendation(0).then(list => {
       this.setState({list})
     })
+    refreshPost = this.refresh
   }
 
   loadMore = () => {
@@ -46,6 +49,15 @@ class PostsList extends React.Component {
       } else {
         this.setState({list: [...this.state.list!, ...list]})
       }
+    })
+  }
+
+  refresh = () => {
+    network.getRecommendation(0).then(list => {
+      this.setState({
+        list,
+        noMore: false,
+      })
     })
   }
 

@@ -18,6 +18,7 @@ import {useDropzone} from 'react-dropzone'
 import {getFBAuth} from '../auth'
 import {useAuthState} from 'react-firebase-hooks/auth'
 import AddIcon from '@material-ui/icons/Add'
+import {refreshPost} from './home_page'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,6 +97,7 @@ export function NewPostWindow() {
       await network.newImagePost(title, description, parseInt(targetVotes), isAnonymous, imageFile!)
     }
     setIsLoading(false)
+    refreshPost!()
     onClose()
   }
   return <Window onClick={onClose} center>
@@ -165,7 +167,6 @@ type NewPostTextProps = {
 function NewPostText({textPostChoices, setTextPostChoices}: NewPostTextProps) {
   const classes = useStyles()
   const [focusedKey, setFocusedKey] = useState(textPostChoices[0].key)
-  console.log(focusedKey, textPostChoices)
 
   return <>
     {textPostChoices.map(({text, key}, i) => <TextField

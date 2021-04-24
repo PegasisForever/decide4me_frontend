@@ -125,10 +125,12 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
     const classes = this.props.classes
     return <Paper className={classes.card} elevation={2}>
       <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-        <Box display={'flex'} alignItems={'center'}>
-          <img className={classes.profileImage} src={this.props.user.profileImageUrl} alt={'profile'}/>
-          <Typography className={classes.userName}>{this.props.user.name}</Typography>
-        </Box>
+        {post.isAnonymous ?
+          <Typography className={classes.userName}>Anonymous</Typography> :
+          <Box display={'flex'} alignItems={'center'}>
+            <img className={classes.profileImage} src={this.props.user.profileImageUrl} alt={'profile'}/>
+            <Typography className={classes.userName}>{this.props.user.name}</Typography>
+          </Box>}
         <Typography className={classes.timeText}>{this.localizeDate(post.time)}</Typography>
       </Box>
 
