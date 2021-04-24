@@ -1,8 +1,10 @@
 import axios from 'axios'
 import firebase from 'firebase/app'
 import {getFBAuth} from '../auth'
+import {Post} from '../model/post'
 
 const baseUrl = 'https://server-jajlu2sqkq-nn.a.run.app'
+// const baseUrl = 'http://25.119.62.232:4000'
 
 export const network = {
   async register(firebaseUser: firebase.User): Promise<void> {
@@ -55,5 +57,16 @@ export const network = {
       choiceX,
       choiceY,
     })
+  },
+
+  async getRecommendation(): Promise<Array<Post>> {
+    const res = await axios.post(baseUrl + '/recommendation', {
+      idToken: await getFBAuth().currentUser!.getIdToken(),
+      start: 0,
+      length: 10,
+      refreshID: 'awa',
+    })
+    // @ts-ignore
+    return res.data['data'].map(({id, post})=>Post.getFromJson(id, post))
   },
 }

@@ -1,19 +1,19 @@
 import {HomeNavbar} from '../components/home_navbar'
 import {Box, createStyles, Fab, makeStyles, Theme} from '@material-ui/core'
 import React from 'react'
-import {Post} from '../model/post'
 import CreateIcon from '@material-ui/icons/Create'
 import {useHistory} from 'react-router-dom'
 import usePromise from 'react-use-promise'
 import {PostComponent} from '../components/post_component'
+import {network} from '../network/network'
 
 export function HomePage() {
-  const [post] = usePromise(() => Post.getFromID('rGqld7f0nyBmVqffGcba'), [])
+  const [posts] = usePromise(() => network.getRecommendation(), [])
 
   return <div>
     <HomeNavbar/>
     <Box marginTop={'68px'}>
-      {post ? <PostComponent post={post}/> : null}
+      {posts?.map(post => <PostComponent key={post.id} post={post}/>)}
     </Box>
     <NewPostButton/>
   </div>

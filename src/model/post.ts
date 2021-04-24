@@ -56,6 +56,28 @@ export class Post {
       imageData,
     )
   }
+
+  static getFromJson(id: string, json: any): Post {
+    let textData: TextPostData | null = null
+    let imageData: ImagePostData | null = null
+    if (json['text']) {
+      textData = new TextPostData(json['text']['choices'], new Map(Object.entries(json['text']['results'])))
+    } else if (json['image']) {
+      imageData = new ImagePostData(json['image']['imageUrl'], new Map(Object.entries(json['image']['results'])))
+    }
+    return new Post(
+      id,
+      json['userID'],
+      json['title'],
+      json['description'],
+      new Date(json['time']),
+      json['views'],
+      json['targetVotes'],
+      new Set(json['votedUserIDs']),
+      textData,
+      imageData,
+    )
+  }
 }
 
 export class TextPostData {
