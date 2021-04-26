@@ -1,30 +1,19 @@
 import {HomeNavbar} from '../components/home_navbar'
 import {CircularProgress, createStyles, Fab, makeStyles, Theme, Typography} from '@material-ui/core'
-import React, {useEffect, useRef, useState} from 'react'
+import React, {Component, useEffect, useRef, useState} from 'react'
 import CreateIcon from '@material-ui/icons/Create'
 import {useHistory} from 'react-router-dom'
 import {PostComponent} from '../components/post_component'
 import {network} from '../network/network'
-import {useAuthState} from 'react-firebase-hooks/auth'
 import {getFBAuth} from '../auth'
 // @ts-ignore
 import {useIsVisible} from 'react-is-visible'
 import {Post} from '../model/post'
 import {User} from '../model/user'
 
-export function HomePage() {
-  const [, isLoading] = useAuthState(getFBAuth())
-
-  return <div>
-    <HomeNavbar/>
-    {!isLoading ? <PostsList/> : null}
-    <NewPostButton/>
-  </div>
-}
-
 export let refreshPost: (() => void) | null = null
 
-class PostsList extends React.Component {
+export class HomePage extends Component {
   state: {
     list: Array<{ post: Post, user: User }> | null,
     noMore: boolean,
@@ -34,10 +23,13 @@ class PostsList extends React.Component {
   }
 
   componentDidMount = () => {
-    network.getRecommendation(0).then(list => {
-      this.setState({list})
+    const unsub = getFBAuth().onAuthStateChanged(() => {
+      unsub()
+      network.getRecommendation(0).then(list => {
+        this.setState({list})
+      })
+      refreshPost = this.refresh
     })
-    refreshPost = this.refresh
   }
 
   loadMore = () => {
@@ -62,15 +54,28 @@ class PostsList extends React.Component {
   }
 
   render() {
-    return <div style={{
-      marginTop: '68px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    }}>
-      {this.state.list?.map(({post, user}) => <PostComponent key={post.id} post={post} user={user}/>)}
-      {(this.state.list && !this.state.noMore) ? <LoadMore key={this.state.list.length} onLoad={this.loadMore}/> : null}
-      {this.state.noMore ? <NoMore/> : null}
+    return <div>
+      <HomeNavbar/>
+      {this.state.list ? <div style={{
+        marginTop: '68px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        {this.state.list?.map(({post, user}) => <PostComponent key={post.id} post={post} user={user}/>)}
+        {(this.state.list && !this.state.noMore) ?
+          <LoadMore key={this.state.list.length} onLoad={this.loadMore}/> : null}
+        {this.state.noMore ? <NoMore/> : null}
+      </div> : <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%,-50%)',
+        }}>
+        <CircularProgress/>
+      </div>}
+      <NewPostButton/>
     </div>
   }
 }

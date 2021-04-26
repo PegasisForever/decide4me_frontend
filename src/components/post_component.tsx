@@ -191,8 +191,8 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
             style={{
               position: 'absolute',
               left: '-2px',
-              top: '-2px',
-              bottom: '-2px',
+              top: '-1px',
+              bottom: '-1px',
               borderRadius: '4px',
             }}
             transition={{
@@ -200,7 +200,7 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
               bounce: 0,
             }}
             animate={{
-              width: widthPercent === 0 ? '0px' : `calc(${widthPercent * 100}% + 4px)`,
+              width: (vote === 0) ? '0px' : `calc(${widthPercent * 100}% + 2px)`,
               backgroundColor: (myChoice === i) ? '#3f51b5' : '#b3b7ff',
             }}
           />
