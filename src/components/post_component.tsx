@@ -154,7 +154,7 @@ class _PostComponent extends Component<PropsWithHistory<PropsWithClasses<PropsWi
     let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     let hours = date.getHours().toString()
     let minutes = date.getMinutes().toString()
-    return `${months[date.getMonth()]} ${date.getFullYear()}, ${hours.length === 1 ? ('0' + hours) : hours}:${minutes.length === 1 ? ('0' + minutes) : minutes}`
+    return `${months[date.getMonth()]} ${date.getDate()}, ${hours.length === 1 ? ('0' + hours) : hours}:${minutes.length === 1 ? ('0' + minutes) : minutes}`
   }
 
   getTextPostPart = () => {
